@@ -16,21 +16,22 @@
 set -e
 
 # Generate Certificate Authority
-openssl genrsa -out ca.key 2048
-openssl req -new -x509 -days 365 -key ca.key -out ca.crt
+# openssl genrsa -out ca.key 2048
+#openssl req -new -x509 -days 365 -key ca.key -out ca.crt
 
 # Create the server key and CSR.
 # The parameter in -subj specifies Common Name, which is the only required field
 # in CSR, and should correspond to NAME in
 # $ kubectl get svc
-openssl genrsa -out grafeas.key 2048
-openssl req -subj "/CN=grafeas-server" -new -key grafeas.key -out grafeas.csr
+#openssl genrsa -out grafeas.key 2048
+#openssl req -subj "/CN=grafeas-server" -new -key grafeas.key -out grafeas.csr
 
 # Create self-signed server certificate
-openssl x509 -req -days 365 -in grafeas.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out grafeas.crt
+#openssl x509 -req -days 365 -in grafeas.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out grafeas.crt
 
 # Delete the server CSR, as it's no longer needed
-rm grafeas.csr
+#rm grafeas.csr
 
 # Install Grafeas helm chart
-helm install --name grafeas https://storage.googleapis.com/grafeas-charts/repository/grafeas-charts-0.1.0.tgz --set certificates.ca="$(cat ca.crt)" --set certificates.cert="$(cat grafeas.crt)" --set "certificates.key=$(cat grafeas.key)" --set service.type="LoadBalancer"
+#microk8s.helm install https://storage.googleapis.com/grafeas-charts/repository/grafeas-charts-0.1.0.tgz --set certificates.ca="$(cat ca.crt)" --set certificates.cert="$(cat grafeas.crt)" --set "certificates.key=$(cat grafeas.key)" --set service.type="LoadBalancer"
+microk8s.helm install --name grafeas /home/ubuntu/go/src/github.com/grafeas/grafeas/grafeas-charts --set certificates.enabled=true --set certificates.ca="$(cat ca.crt)" --set certificates.cert="$(cat grafeas.crt)" --set "certificates.key=$(cat grafeas.key)"

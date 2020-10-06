@@ -35,11 +35,11 @@ else
 	PUBLIC_KEY=`base64 gpg.pub -w 0`
 fi
 
-kubectl create secret generic attestor --from-file=public=gpg.pub --from-file=private=gpg.priv
+microk8s.kubectl create secret generic attestor --from-file=public=gpg.pub --from-file=private=gpg.priv
 
 # Create AttestationAuthority CRD in the k8s cluster. It will be used to enforce
 # the GenericAttestationPolicy.
-cat <<EOF | kubectl apply -f - \
+cat <<EOF | microk8s.kubectl apply -f - \
 
 apiVersion: kritis.grafeas.io/v1beta1
 kind: AttestationAuthority
@@ -47,7 +47,7 @@ metadata:
   name: kritis-authority
   namespace: default
 spec:
-  noteReference: v1beta1/projects/standalone
+  noteReference: projects/kritis/notes/att
   publicKeys:
   - keyType: PGP 
     keyId: $KEY_FINGERPRINT
@@ -57,7 +57,7 @@ EOF
 
 # Create GenericAttestationPolicy that references the AttestationAuthority we
 # just created.
-cat <<EOF | kubectl apply -f - \
+cat <<EOF | microk8s.kubectl apply -f - \
 
 apiVersion: kritis.grafeas.io/v1beta1
 kind: GenericAttestationPolicy
@@ -69,5 +69,5 @@ spec:
   - kritis-authority
 EOF
 
-kubectl delete pods java
-kubectl apply -f pod.yaml
+#kubectl delete pods java
+#kubectl apply -f pod.yaml

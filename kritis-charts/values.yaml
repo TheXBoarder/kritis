@@ -5,9 +5,10 @@
 replicaCount: 1
 
 image:
-  tag: v0.2.2
-  image: kritis-server
-  name: kritis-server
+  repository: thexboarder
+  name: kritis
+  image: /kritis
+  tag: latest
   pullPolicy: Always
 
 service:
@@ -43,7 +44,8 @@ clusterRoleName: kritis-clusterrole
 
 kritisInstallLabel: "kritis.grafeas.io/install"
 
-repository: gcr.io/kritis-project/
+#repository: gcr.io/kritis-project/
+repository: thexboarder
 
 # kritis-server-webhook.yaml values
 caBundle: ""
@@ -59,13 +61,13 @@ preinstall:
   createNewCSR: "--create-new-csr=true"
   pod:
     name: "kritis-preinstall"
-    image: preinstall
+    image: /kritis-preinstall
     command: ["/preinstall"]
 
 postinstall:
   pod:
     name: "kritis-postinstall"
-    image: postinstall
+    image: /kritis-postinstall
     command: ["/postinstall"]
 
 
@@ -74,7 +76,7 @@ predelete:
   deleteCRDs: "--delete-crd=true"
   pod:
     name: "kritis-predelete"
-    image: predelete
+    image: /kritis-predelete
     command: ["/predelete"]
 
 # Certificates for Grafeas mutual authentication

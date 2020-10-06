@@ -16,8 +16,8 @@
 set -e
 
 # Create KritisConfig CRD in the k8s cluster and set it.
-kubectl apply -f ../../artifacts/kritis-config-crd.yaml
-cat <<EOF | kubectl apply -f - \
+microk8s.kubectl apply -f ../../artifacts/kritis-config-crd.yaml
+cat <<EOF | microk8s.kubectl apply -f - \
 
 apiVersion: kritis.grafeas.io/v1beta1
 kind: KritisConfig
@@ -42,4 +42,4 @@ openssl x509 -req -days 365 -in kritis.csr -CA ca.crt -CAkey ca.key -set_serial 
 rm kritis.csr
 
 # Install Kritis helm chart
-helm install --name kritis https://storage.googleapis.com/kritis-charts/repository/kritis-charts-0.1.0.tgz --set certificates.ca="$(cat ca.crt)" --set certificates.cert="$(cat kritis.crt)" --set certificates.key="$(cat kritis.key)"
+microk8s.helm install --name kritis  /home/ubuntu/go/src/github.com/grafeas/kritis/kritis-charts --set certificates.ca="$(cat ca.crt)" --set certificates.cert="$(cat kritis.crt)" --set certificates.key="$(cat kritis.key)"

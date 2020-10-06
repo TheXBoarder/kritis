@@ -14,7 +14,7 @@
 
 PWD = $(shell pwd)
 GOOS ?= $(shell go env GOOS)
-GOARCH = amd64
+GOARCH = arm64
 BUILD_DIR ?= ./out
 COMMIT ?= $(shell git rev-parse HEAD)
 VERSION ?= v0.2.2
@@ -37,7 +37,8 @@ GITHUB_PROJECT := kritis
 REPOPATH ?= $(GITHUB_ORG)/$(GITHUB_PROJECT)
 RESOLVE_TAGS_PROJECT := resolve-tags
 
-SUPPORTED_PLATFORMS := linux-$(GOARCH) darwin-$(GOARCH) windows-$(GOARCH).exe
+#SUPPORTED_PLATFORMS := linux-$(GOARCH) darwin-$(GOARCH) windows-$(GOARCH).exe
+SUPPORTED_PLATFORMS := linux-$(GOARCH)
 RESOLVE_TAGS_PATH = cmd/kritis/kubectl/plugins/resolve
 RESOLVE_TAGS_PACKAGE = $(REPOPATH)/$(RESOLVE_TAGS_PATH)
 RESOLVE_TAGS_KUBECTL_DIR = ~/.kube/plugins/resolve-tags
@@ -126,7 +127,7 @@ $(HELM_HOOKS): $(GO_FILES)
 
 .PHONY: %-image
 %-image: $(HELM_HOOKS)
-	docker build -t $(REGISTRY)/$*:$(IMAGE_TAG) -f helm-hooks/Dockerfile . --build-arg stage=$*
+	sudo docker build -t $(REGISTRY)/$*:$(IMAGE_TAG) -f helm-hooks/Dockerfile . --build-arg stage=$*
 
 .PHONY: helm-release-image
 helm-release-image:
